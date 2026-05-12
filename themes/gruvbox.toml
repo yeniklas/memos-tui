@@ -1,0 +1,26 @@
+# Gruvbox Dark theme for mt
+# Copy to ~/.config/mt/theme.toml to use.
+#
+# Colors from the Gruvbox dark palette by morhetz:
+# https://github.com/morhetz/gruvbox
+
+# Focused panel border — Gruvbox bright blue
+primary  = "#83a598"
+
+# Unfocused borders, help bar, empty state — Gruvbox gray
+muted    = "#928374"
+
+# Selected memo row — Gruvbox bright yellow
+selected = "#fabd2f"
+
+# Memo date column — Gruvbox light4 (warm off-white)
+date     = "#bdae93"
+
+# Hashtags and tag chips — Gruvbox bright aqua
+tag      = "#8ec07c"
+
+# Error messages — Gruvbox bright red
+error    = "#fb4934"
+
+# Pinned memo indicator — Gruvbox bright orange
+pinned   = "#fe8019"
