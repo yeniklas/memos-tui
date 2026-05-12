@@ -1,5 +1,5 @@
-# Gruvbox Dark theme for mt
-# Copy to ~/.config/mt/theme.toml to use.
+# Gruvbox Dark theme for memos-tui
+# Copy to ~/.config/memos-tui/theme.toml to use.
 #
 # Colors from the Gruvbox dark palette by morhetz:
 # https://github.com/morhetz/gruvbox
