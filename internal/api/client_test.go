@@ -50,7 +50,7 @@ func TestExtractTags(t *testing.T) {
 		})
 	}))
 
-	memos, _, err := c.ListMemos("", "")
+	memos, _, err := c.ListMemos("", "", false)
 	if err != nil {
 		t.Fatalf("ListMemos: %v", err)
 	}
@@ -81,7 +81,7 @@ func TestExtractTags_hierarchical(t *testing.T) {
 		writeJSON(w, map[string]any{"memos": []any{memoJSON}, "nextPageToken": ""})
 	}))
 
-	memos, _, err := c.ListMemos("", "")
+	memos, _, err := c.ListMemos("", "", false)
 	if err != nil {
 		t.Fatalf("ListMemos: %v", err)
 	}
@@ -112,7 +112,7 @@ func TestExtractTags_deepHierarchy(t *testing.T) {
 		writeJSON(w, map[string]any{"memos": []any{memoJSON}, "nextPageToken": ""})
 	}))
 
-	memos, _, err := c.ListMemos("", "")
+	memos, _, err := c.ListMemos("", "", false)
 	if err != nil {
 		t.Fatalf("ListMemos: %v", err)
 	}
@@ -137,7 +137,7 @@ func TestExtractTags_duplicates(t *testing.T) {
 		writeJSON(w, map[string]any{"memos": []any{memoJSON}, "nextPageToken": ""})
 	}))
 
-	memos, _, err := c.ListMemos("", "")
+	memos, _, err := c.ListMemos("", "", false)
 	if err != nil {
 		t.Fatalf("ListMemos: %v", err)
 	}
@@ -161,7 +161,7 @@ func TestExtractTags_noTags(t *testing.T) {
 		writeJSON(w, map[string]any{"memos": []any{memoJSON}, "nextPageToken": ""})
 	}))
 
-	memos, _, err := c.ListMemos("", "")
+	memos, _, err := c.ListMemos("", "", false)
 	if err != nil {
 		t.Fatalf("ListMemos: %v", err)
 	}
@@ -197,7 +197,7 @@ func TestListMemos_requestShape(t *testing.T) {
 		writeJSON(w, map[string]any{"memos": []any{}, "nextPageToken": ""})
 	}))
 
-	_, _, err := c.ListMemos(`content.contains("hello")`, "tok123")
+	_, _, err := c.ListMemos(`content.contains("hello")`, "tok123", false)
 	if err != nil {
 		t.Fatalf("ListMemos: %v", err)
 	}
@@ -223,7 +223,7 @@ func TestListMemos_pagination(t *testing.T) {
 		})
 	}))
 
-	_, nextToken, err := c.ListMemos("", "")
+	_, nextToken, err := c.ListMemos("", "", false)
 	if err != nil {
 		t.Fatalf("ListMemos: %v", err)
 	}
@@ -239,7 +239,7 @@ func TestListMemos_noFilter(t *testing.T) {
 		writeJSON(w, map[string]any{"memos": []any{}, "nextPageToken": ""})
 	}))
 
-	_, _, err := c.ListMemos("", "")
+	_, _, err := c.ListMemos("", "", false)
 	if err != nil {
 		t.Fatalf("ListMemos: %v", err)
 	}
@@ -451,7 +451,7 @@ func TestAPIError_400(t *testing.T) {
 		writeJSON(w, map[string]string{"message": "invalid filter"})
 	}))
 
-	_, _, err := c.ListMemos("bad filter", "")
+	_, _, err := c.ListMemos("bad filter", "", false)
 	if err == nil {
 		t.Fatal("expected error for 400 response, got nil")
 	}
@@ -465,7 +465,7 @@ func TestAPIError_500_noBody(t *testing.T) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}))
 
-	_, _, err := c.ListMemos("", "")
+	_, _, err := c.ListMemos("", "", false)
 	if err == nil {
 		t.Fatal("expected error for 500 response, got nil")
 	}
