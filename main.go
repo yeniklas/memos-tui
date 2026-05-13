@@ -14,6 +14,7 @@ import (
 	"github.com/yeniklas/memos-tui/internal/config"
 	"github.com/yeniklas/memos-tui/internal/model"
 	"github.com/yeniklas/memos-tui/internal/tui"
+	"github.com/yeniklas/memos-tui/internal/updater"
 )
 
 var version = "dev"
@@ -22,10 +23,19 @@ func main() {
 	profile := flag.String("profile", "", "config profile to use (default: default_profile from config)")
 	versionFlag := flag.Bool("version", false, "print version and exit")
 	journalFlag := flag.Bool("journal", false, "open or create today's journal entry")
+	updateFlag := flag.Bool("self-update", false, "update memos-tui to the latest release")
 	flag.Parse()
 
 	if *versionFlag {
 		fmt.Println(version)
+		os.Exit(0)
+	}
+
+	if *updateFlag {
+		if err := updater.Run(version); err != nil {
+			fmt.Fprintln(os.Stderr, "update:", err)
+			os.Exit(1)
+		}
 		os.Exit(0)
 	}
 
