@@ -259,6 +259,8 @@ func (a *App) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			a.list.activeShortcut = ""
 			a.list.activeDate = ""
 			a.list.showArchived = false
+			a.searchMode = false
+			a.searchQuery = ""
 			return a, a.reloadMemos()
 		}
 
@@ -519,12 +521,14 @@ func (a *App) handleSearchKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "enter":
 		q := strings.TrimSpace(a.search.input.Value())
 		if q == "" {
+			a.focus = panelList
 			return a, nil
 		}
 		a.searchQuery = q
 		a.searchMode = true
 		a.search.loading = true
 		a.list.loading = true
+		a.focus = panelList
 		return a, tea.Batch(
 			searchCmd(a.client, q),
 			a.search.spinner.Tick,
