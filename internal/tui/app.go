@@ -108,7 +108,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case moreMemosLoadedMsg:
 		a.list.loading = false
-		a.list.memos = sortPinnedFirst(append(a.list.memos, msg.memos...))
+		a.list.memos = sortPinnedFirst(dedupMemos(append(a.list.memos, msg.memos...)))
 		a.list.nextToken = msg.nextToken
 
 	case memoSavedMsg:
@@ -873,6 +873,24 @@ func loadMemosCmd(client *api.Client, filter, pageToken string, archived bool) t
 		if err != nil {
 			return errMsg{err}
 		}
+		// On the first page of a non-archived load, prefetch all pinned memos so
+		// they appear at the top regardless of the API's time-based sort order.
+		if pageToken == "" && !archived {
+			pinnedFilter := combineFilters(filter, "pinned == true")
+			if pinned, _, err2 := client.ListMemos(pinnedFilter, "", false); err2 == nil && len(pinned) > 0 {
+				seen := make(map[string]bool, len(pinned))
+				for _, m := range pinned {
+					seen[m.Name] = true
+				}
+				var rest []model.Memo
+				for _, m := range memos {
+					if !seen[m.Name] {
+						rest = append(rest, m)
+					}
+				}
+				memos = append(pinned, rest...)
+			}
+		}
 		return memosLoadedMsg{memos: memos, nextToken: next}
 	}
 }
@@ -1020,6 +1038,18 @@ func loadShortcutsCmd(client *api.Client, userName string) tea.Cmd {
 		}
 		return shortcutsLoadedMsg{shortcuts: shortcuts}
 	}
+}
+
+func dedupMemos(memos []model.Memo) []model.Memo {
+	seen := make(map[string]bool, len(memos))
+	result := make([]model.Memo, 0, len(memos))
+	for _, m := range memos {
+		if !seen[m.Name] {
+			seen[m.Name] = true
+			result = append(result, m)
+		}
+	}
+	return result
 }
 
 func sortPinnedFirst(memos []model.Memo) []model.Memo {
