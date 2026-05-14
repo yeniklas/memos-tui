@@ -30,7 +30,7 @@ default_profile = "home"
 url   = "https://memos.example.com"
 token = "memos_pat_abc123"
 `)
-	p, err := Load("home")
+	p, _, err := Load("home")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -51,7 +51,7 @@ url   = "https://work.example.com"
 token = "memos_pat_work"
 `)
 	// empty profileName should fall back to default_profile
-	p, err := Load("")
+	p, _, err := Load("")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -72,7 +72,7 @@ token = "tok_home"
 url   = "https://work.example.com"
 token = "tok_work"
 `)
-	p, err := Load("work")
+	p, _, err := Load("work")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -85,7 +85,7 @@ func TestLoad_missingFile(t *testing.T) {
 	// point XDG_CONFIG_HOME at an empty temp dir so no config.toml exists
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
 
-	_, err := Load("home")
+	_, _, err := Load("home")
 	if err == nil {
 		t.Fatal("expected error for missing config file, got nil")
 	}
@@ -99,7 +99,7 @@ default_profile = "home"
 url   = "https://memos.example.com"
 token = "tok"
 `)
-	_, err := Load("nonexistent")
+	_, _, err := Load("nonexistent")
 	if err == nil {
 		t.Fatal("expected error for missing profile, got nil")
 	}
@@ -113,7 +113,7 @@ default_profile = "bad"
 url   = ""
 token = "tok"
 `)
-	_, err := Load("bad")
+	_, _, err := Load("bad")
 	if err == nil {
 		t.Fatal("expected error for empty URL, got nil")
 	}
@@ -127,7 +127,7 @@ default_profile = "bad"
 url   = "https://memos.example.com"
 token = ""
 `)
-	_, err := Load("bad")
+	_, _, err := Load("bad")
 	if err == nil {
 		t.Fatal("expected error for empty token, got nil")
 	}
@@ -139,7 +139,7 @@ func TestLoad_noDefaultProfile(t *testing.T) {
 url   = "https://memos.example.com"
 token = "tok"
 `)
-	_, err := Load("")
+	_, _, err := Load("")
 	if err == nil {
 		t.Fatal("expected error when no default_profile and no profile arg, got nil")
 	}

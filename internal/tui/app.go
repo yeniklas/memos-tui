@@ -56,9 +56,11 @@ type App struct {
 	spinner     spinner.Model
 	searchMode  bool // true when displaying search results
 	searchQuery string
+	profile     string
+	version     string
 }
 
-func NewApp(client *api.Client, markdownEnabled bool, theme config.Theme) *App {
+func NewApp(client *api.Client, markdownEnabled bool, theme config.Theme, profile, version string) *App {
 	sp := spinner.New()
 	sp.Spinner = spinner.Dot
 
@@ -69,6 +71,8 @@ func NewApp(client *api.Client, markdownEnabled bool, theme config.Theme) *App {
 		preview: newPreviewModel(markdownEnabled, theme),
 		search:  newSearchModel(),
 		spinner: sp,
+		profile: profile,
+		version: version,
 	}
 }
 
@@ -711,7 +715,13 @@ func (a *App) renderStatus() string {
 	}
 	parts = append(parts, base)
 
-	return strings.Join(parts, "  ")
+	left := strings.Join(parts, "  ")
+	right := styleMuted.Render("profile: " + a.profile + "  " + a.version)
+	pad := a.width - lipgloss.Width(left) - lipgloss.Width(right)
+	if pad < 1 {
+		pad = 1
+	}
+	return left + strings.Repeat(" ", pad) + right
 }
 
 func (a *App) renderFilterIndicator() string {

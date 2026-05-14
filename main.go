@@ -39,7 +39,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	prof, err := config.Load(*profile)
+	prof, profileName, err := config.Load(*profile)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -62,7 +62,7 @@ func main() {
 	tui.ApplyTheme(theme)
 
 	client := api.New(prof.URL, prof.Token)
-	app := tui.NewApp(client, prof.MarkdownEnabled(), theme)
+	app := tui.NewApp(client, prof.MarkdownEnabled(), theme, profileName, version)
 
 	p := tea.NewProgram(app, tea.WithAltScreen(), tea.WithMouseCellMotion())
 	if _, err := p.Run(); err != nil {
