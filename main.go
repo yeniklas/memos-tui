@@ -73,10 +73,14 @@ func main() {
 
 func runJournal(client *api.Client, prof config.Profile) error {
 	date := time.Now().Format("2006-01-02")
-	tag := prof.JournalTagOrDefault()
+	tags := prof.JournalTagsOrDefault()
 	title := "# " + date
 
-	filter := fmt.Sprintf(`content.contains("%s") && content.contains("#%s")`, title, tag)
+	filterParts := []string{fmt.Sprintf(`content.contains("%s")`, title)}
+	for _, t := range tags {
+		filterParts = append(filterParts, fmt.Sprintf(`content.contains("#%s")`, t))
+	}
+	filter := strings.Join(filterParts, " && ")
 	memos, _, err := client.ListMemos(filter, "", false)
 	if err != nil {
 		return err
@@ -99,7 +103,8 @@ func runJournal(client *api.Client, prof config.Profile) error {
 		}
 	}
 
-	initial := title + "\n\n#" + tag + "\n"
+	tagLine := "#" + strings.Join(tags, " #")
+	initial := title + "\n\n" + tagLine + "\n"
 	if existing != nil {
 		initial = existing.Content
 	}

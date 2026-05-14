@@ -13,7 +13,7 @@ type Profile struct {
 	URL        string `toml:"url"`
 	Token      string `toml:"token"`
 	Markdown   *bool  `toml:"markdown"`    // nil → default true (enabled)
-	JournalTag string `toml:"journal_tag"` // tag applied to journal entries; defaults to "diary"
+	JournalTags []string `toml:"journal_tags"` // tags applied to journal entries; defaults to ["diary"]
 }
 
 // MarkdownEnabled returns true unless the profile explicitly sets markdown = false.
@@ -24,12 +24,12 @@ func (p Profile) MarkdownEnabled() bool {
 	return *p.Markdown
 }
 
-// JournalTagOrDefault returns the configured journal tag, or "diary" if unset.
-func (p Profile) JournalTagOrDefault() string {
-	if p.JournalTag == "" {
-		return "diary"
+// JournalTagsOrDefault returns the configured journal tags, or ["diary"] if unset.
+func (p Profile) JournalTagsOrDefault() []string {
+	if len(p.JournalTags) == 0 {
+		return []string{"diary"}
 	}
-	return p.JournalTag
+	return p.JournalTags
 }
 
 type Config struct {

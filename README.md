@@ -49,7 +49,7 @@ Switch profiles with `memos-tui --profile work`.
 | `url` | — | Base URL of your Memos instance |
 | `token` | — | Personal access token |
 | `markdown` | `true` | Render markdown in the preview panel |
-| `journal_tag` | `"diary"` | Tag applied to journal entries |
+| `journal_tags` | `["diary"]` | Tags applied to journal entries |
 
 ## Usage
 
@@ -100,4 +100,8 @@ A [Gruvbox dark theme](themes/gruvbox.toml) is included in the repository.
 
 ## Journal mode
 
-`memos-tui --journal` opens today's journal entry in `$EDITOR`. If an entry for today already exists it is loaded for editing; otherwise a new one is created with today's date as the heading and your configured `journal_tag` applied.
+`memos-tui --journal` opens today's journal entry in `$EDITOR`. If an entry for today already exists it is loaded for editing; otherwise a new one is created with today's date as the heading and your configured `journal_tags` applied.
+
+```toml
+journal_tags = ["diary", "daily"]
+```
