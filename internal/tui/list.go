@@ -114,7 +114,7 @@ func (m listModel) renderInner() string {
 		default:
 			dateStr := styleDate.Render(date)
 			tagsStr := renderTagsInline(memo.Tags, tagMaxWidth)
-			row = fmt.Sprintf("%s   %s  %-*s  %s",
+			row = fmt.Sprintf("%s%s  %-*s  %s",
 				prefix, dateStr, snippetWidth, snippet, tagsStr)
 		}
 
