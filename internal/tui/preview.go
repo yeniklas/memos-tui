@@ -106,10 +106,6 @@ func (m previewModel) renderMeta() string {
 	}
 	date := m.memo.DisplayTime.Format("2006-01-02 15:04")
 	vis := m.memo.Visibility.Short()
-	pinStr := ""
-	if m.memo.Pinned {
-		pinStr = " 📌"
-	}
 	tags := ""
 	if len(m.memo.Tags) > 0 {
 		tagged := make([]string, len(m.memo.Tags))
@@ -118,7 +114,7 @@ func (m previewModel) renderMeta() string {
 		}
 		tags = "  " + styleTag.Render(strings.Join(tagged, " "))
 	}
-	return styleMetaBar.Render(fmt.Sprintf("%s · %s%s%s", date, vis, pinStr, tags))
+	return styleMetaBar.Render(fmt.Sprintf("%s · %s%s", date, vis, tags))
 }
 
 func buildGlamourStyle(t config.Theme) ansi.StyleConfig {

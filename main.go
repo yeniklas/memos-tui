@@ -64,7 +64,7 @@ func main() {
 	client := api.New(prof.URL, prof.Token)
 	app := tui.NewApp(client, prof.MarkdownEnabled(), theme, profileName, version)
 
-	p := tea.NewProgram(app, tea.WithAltScreen(), tea.WithMouseCellMotion())
+	p := tea.NewProgram(app, tea.WithAltScreen(), tea.WithMouseCellMotion(), tea.WithFPS(10))
 	if _, err := p.Run(); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
 		os.Exit(1)

@@ -77,6 +77,7 @@ func NewApp(client *api.Client, markdownEnabled bool, theme config.Theme, profil
 }
 
 func (a *App) Init() tea.Cmd {
+	a.list.loading = true
 	return tea.Batch(
 		loadMemosCmd(a.client, "", "", false),
 		loadTagsCmd(a.client),
@@ -191,9 +192,16 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		a.err = msg.err
 
 	case spinner.TickMsg:
+		if !a.list.loading && !a.search.loading {
+			return a, nil
+		}
 		var cmd, searchCmd tea.Cmd
-		a.spinner, cmd = a.spinner.Update(msg)
-		a.search.spinner, searchCmd = a.search.spinner.Update(msg)
+		if a.list.loading {
+			a.spinner, cmd = a.spinner.Update(msg)
+		}
+		if a.search.loading {
+			a.search.spinner, searchCmd = a.search.spinner.Update(msg)
+		}
 		return a, tea.Batch(cmd, searchCmd)
 	}
 
@@ -536,6 +544,7 @@ func (a *App) handleSearchKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return a, tea.Batch(
 			searchCmd(a.client, q),
 			a.search.spinner.Tick,
+			a.spinner.Tick,
 		)
 	default:
 		var cmd tea.Cmd
@@ -786,7 +795,7 @@ func (a *App) moveCursorDown() tea.Cmd {
 		// load more if available
 		if a.list.nextToken != "" && !a.list.loading {
 			a.list.loading = true
-			return loadMoreCmd(a.client, a.currentFilter(), a.list.nextToken, a.list.showArchived)
+			return tea.Batch(loadMoreCmd(a.client, a.currentFilter(), a.list.nextToken, a.list.showArchived), a.spinner.Tick)
 		}
 	}
 	a.adjustOffset()
@@ -981,10 +990,13 @@ func (a *App) currentFilter() string {
 // active date filter client-side when one is set.
 func (a *App) reloadMemos() tea.Cmd {
 	a.list.loading = true
+	var cmd tea.Cmd
 	if a.list.activeDate != "" {
-		return loadMemosByDateCmd(a.client, a.currentFilter(), a.list.activeDate, a.list.showArchived)
+		cmd = loadMemosByDateCmd(a.client, a.currentFilter(), a.list.activeDate, a.list.showArchived)
+	} else {
+		cmd = loadMemosCmd(a.client, a.currentFilter(), "", a.list.showArchived)
 	}
-	return loadMemosCmd(a.client, a.currentFilter(), "", a.list.showArchived)
+	return tea.Batch(cmd, a.spinner.Tick)
 }
 
 // loadMemosByDateCmd fetches all pages matching serverFilter and returns only

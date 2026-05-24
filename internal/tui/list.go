@@ -76,8 +76,7 @@ func (m listModel) renderInner() string {
 	contentWidth := m.width - 4 // inside border + padding
 	dateWidth := 10              // "2006-01-02"
 	tagMaxWidth := 20
-	// 3 chars reserved for pin indicator ("📌 " or "   ") before date
-	snippetWidth := contentWidth - dateWidth - tagMaxWidth - 4 - 3
+	snippetWidth := contentWidth - dateWidth - tagMaxWidth - 4
 
 	// Count pinned memos (they are sorted first by sortPinnedFirst).
 	var pinnedCount int
@@ -104,17 +103,13 @@ func (m listModel) renderInner() string {
 		switch {
 		case memo.Pinned && !isSelected:
 			tagsPlain := plainTags(memo.Tags, tagMaxWidth)
-			content := fmt.Sprintf("📌 %s  %-*s  %-*s",
+			content := fmt.Sprintf("%s  %-*s  %-*s",
 				date, snippetWidth, snippet, tagMaxWidth, tagsPlain)
 			row = prefix + stylePinned.Render(content)
 		case isSelected:
-			pinPrefix := "   "
-			if memo.Pinned {
-				pinPrefix = "📌 "
-			}
 			tagsPlain := plainTags(memo.Tags, tagMaxWidth)
-			content := fmt.Sprintf("%s%s  %-*s  %-*s",
-				pinPrefix, date, snippetWidth, snippet, tagMaxWidth, tagsPlain)
+			content := fmt.Sprintf("%s  %-*s  %-*s",
+				date, snippetWidth, snippet, tagMaxWidth, tagsPlain)
 			row = prefix + styleSelected.Render(content)
 		default:
 			dateStr := styleDate.Render(date)
